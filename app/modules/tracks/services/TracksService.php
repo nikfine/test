@@ -3,6 +3,7 @@
 namespace modules\tracks\services;
 
 use models\TracksModel;
+use RuntimeException;
 use shared\exceptions\ValidateException;
 use Throwable;
 use yii\db\Exception;
@@ -24,10 +25,10 @@ final readonly class TracksService
     }
 
     /**
-     * @param string|array<mixed>|null $status
+     * @param mixed $status
      * @return array<TracksModel>
      */
-    public function list(string|array|null $status = null): array
+    public function list(mixed $status = null): array
     {
         /** @var array<TracksModel> $tracks */
         $tracks = $this
@@ -51,7 +52,10 @@ final readonly class TracksService
         if (!$track->validate()) {
             throw new ValidateException($track->getErrors());
         }
-        $track->save();
+        $result = $track->save();
+        if (!$result) {
+            throw new RuntimeException('Track update failed');
+        }
     }
 
     /**
@@ -69,7 +73,10 @@ final readonly class TracksService
         if (!$track->validate()) {
             throw new ValidateException($track->getErrors());
         }
-        $track->save();
+        $result = $track->save();
+        if (!$result) {
+            throw new RuntimeException('Track update failed');
+        }
     }
 
     /**

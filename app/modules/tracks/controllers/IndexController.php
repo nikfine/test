@@ -10,7 +10,7 @@ use Throwable;
 use yii\db\Exception;
 use yii\db\StaleObjectException;
 use yii\filters\auth\CompositeAuth;
-use yii\rest\Controller;
+use shared\rest\Controller;
 use yii\web\HttpException;
 use yii\web\NotFoundHttpException;
 
@@ -38,15 +38,10 @@ final class IndexController extends Controller
 
     /**
      * @return array<TracksModel>
-     * @throws HttpException
      */
     public function actionIndex(): array
     {
-        $request = $this->request->get('status');
-        if (!\is_string($request) && !\is_null($request) && !\is_array($request)) {
-            throw new HttpException(400, 'Invalid request');
-        }
-        return new TracksService()->list($request);
+        return new TracksService()->list($this->request->get('status'));
     }
 
     /**
@@ -63,17 +58,12 @@ final class IndexController extends Controller
     /**
      * @return array<mixed>|null
      * @throws Exception
-     * @throws HttpException
      * @api
      */
     public function actionCreate(): array|null
     {
         try {
-            $request = $this->request->post();
-            if (!\is_array($request)) {
-                throw new HttpException(400, 'Invalid request');
-            }
-            new TracksService()->create($request);
+            new TracksService()->create($this->request->post());
             return null;
         } catch (ValidateException $e) {
             return $e->getErrors();
@@ -91,11 +81,7 @@ final class IndexController extends Controller
     public function actionUpdate(int $id): array|null
     {
         try {
-            $request = $this->request->post();
-            if (!\is_array($request)) {
-                throw new HttpException(400, 'Invalid request');
-            }
-            new TracksService()->update($id, $request);
+            new TracksService()->update($id, $this->request->post());
             return null;
         } catch (ValidateException $e) {
             return $e->getErrors();
